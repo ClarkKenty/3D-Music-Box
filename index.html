@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>MusicBox 🎵🎶</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="icon" type="image/png" href="/favicon.ico"/>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		html {
+			font-size: 1.041666666vw;
+		}
+
+		body {
+			background-color: #bfe3dd;
+			color: #000;
+			width: 100vw;
+			height: 100vh;
+			overflow: hidden;
+		}
+
+		a {
+			color: #2983ff;
+		}
+
+		#menu {
+			position: fixed;
+			border: 0.0625rem solid #000;
+			width: 1.25rem;
+			height: 1.25rem;
+			top: 0;
+			left: 0;
+		}
+
+		.progress {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			height: 0.625rem;
+			width: 70%;
+			border: 0.625rem solid #f4a261;
+			border-radius: 0.9375rem;
+		}
+
+		.progress .color {
+			position: absolute;
+			background-color: #ffffff;
+			width: 0rem;
+			height: 0.625rem;
+			border-radius: 0.9375rem;
+			transition: width .5s ease;
+		}
+
+		#hdrProgress {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 30vh;
+			height: 30vh;
+			border-radius: 50%;
+			border: 0.0625rem solid #FFF;
+			box-shadow: 0 0 3.125rem #ffffff;
+			line-height: 30vh;
+			text-align: center;
+			font-size: 5vh;
+			user-select: none;
+			display: none;
+			color: black;
+		}
+
+		/* menu style */
+		:root {
+			--home-bg-color: #f2f3ee;
+			--menu-bg-color: #cbcbc2;
+			--silde-btn-border: #808080;
+			--slide-btn-bg: #ddf2db;
+			--slide-btn-hoverbg: #f1fff1;
+			--alpha-green: rgba(33, 96, 47, 0.51);
+			--icon-hover-color: #344a39;
+			--icon-hover-bg: #709680;
+			--text-color: #616161;
+			--border-color: rgba(97, 97, 97, 0.6);
+			--heading-color: #344a39;
+			--box-shadow-color: #b5b5ac;
+			--lightest-green: #86a58d52;
+			--light-green: #9ab09a;
+			--dark-green: rgba(52, 74, 57, 0.86);
+			--box-shadow: 0rem 0rem 0.1875rem 0.3125rem var(--box-shadow-color);
+			--border-radius: 3.75rem 0.3125rem;
+			--fade-green: rgba(57, 87, 64, 0.55);
+		}
+
+		#ham-menu {
+			display: none;
+		}
+
+		label[for="ham-menu"]:hover {
+			background-color: #f2f3ee63;
+		}
+
+		label[for="ham-menu"] {
+			display: block;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 999;
+			width: 3.75rem;
+			transform-origin: top left;
+			transform: scale(0.7);
+			height: 3.75rem;
+			background-color: transparent;
+			border-radius: 0.325rem;
+			border: 0.125rem solid rgba(97, 97, 97, 0.6);
+		}
+
+		.ham-menu {
+			-webkit-backdrop-filter: blur(15px);
+			backdrop-filter: blur(15px);
+			width: 20vw;
+			height: 100%;
+			position: fixed;
+			top: 0;
+			visibility: hidden;
+			transform: translate(-110%);
+			z-index: 998;
+			background-color: rgba(255, 255, 255, .4);
+			transition: 1s;
+			padding: 2rem;
+			white-space: nowrap;
+			color: black;
+			overflow-y: scroll;
+		}
+
+		#ham-menu:checked+label {
+			background-color: transparent;
+			border-color: transparent;
+		}
+
+		#ham-menu:checked~div.ham-menu {
+			transform: translate(0rem);
+			visibility: visible;
+		}
+
+		[for="ham-menu"]>div {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-flow: column wrap;
+			align-content: center;
+			align-items: center;
+		}
+
+		.menu-line {
+			display: block;
+			width: 1.0625rem;
+			height: 0.125rem;
+			margin: 0.625rem 0 0.3125rem;
+			border-top-left-radius: 0.125rem;
+			border-bottom-left-radius: 0.125rem;
+			background-color: var(--border-color);
+			transition: 500ms;
+			transform-origin: right center;
+		}
+
+		[for="ham-menu"]>div>span:nth-child(4),
+		[for="ham-menu"]>div>span:nth-child(5),
+		[for="ham-menu"]>div>span:nth-child(6) {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+			border-top-right-radius: 0.125rem;
+			border-bottom-right-radius: 0.125rem;
+			transform-origin: left center;
+		}
+
+		#ham-menu:checked+label span {
+			background-color: var(--dark-green);
+		}
+
+		#ham-menu:checked+label span:nth-child(2),
+		#ham-menu:checked+label span:nth-child(5) {
+			transform: scale(0);
+		}
+
+		#ham-menu:checked+label span:nth-child(1) {
+			transform: translateY(1.0625rem) rotate(45deg);
+		}
+
+		#ham-menu:checked+label span:nth-child(4) {
+			transform: translateY(1.0625rem) rotate(-45deg);
+		}
+
+		#ham-menu:checked+label span:nth-child(3) {
+			transform: translateY(-1.0625rem) rotate(-45deg);
+		}
+
+		#ham-menu:checked+label span:nth-child(6) {
+			transform: translateY(-1.0625rem) rotate(45deg);
+		}
+
+		.ham-menu * {
+			user-select: none;
+		}
+
+		.ham-menu p {
+			display: block;
+			font-size: 2rem;
+			line-height: 2.5rem;
+			height: 2.5rem;
+			margin-bottom: 1rem;
+		}
+
+		.ham-menu p span>* {
+			vertical-align: middle;
+		}
+
+		.ham-menu ul {
+			width: 100%;
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+			overflow: hidden;
+		}
+
+		.ham-menu ul.hdriul li {
+			float: left;
+			margin-right: 1rem;
+			margin-bottom: 1rem;
+			list-style: none;
+			display: block;
+			border: 1px solid #000;
+			width: 1.5rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+			font-size: 1rem;
+			text-align: center;
+			box-sizing: content-box;
+			cursor: pointer;
+			padding: 0;
+			user-select: none;
+		}
+
+		.serverInfo {
+			line-height: 1rem;
+			letter-spacing: .1rem;
+		}
+
+		.serverExplain {
+			font-size: 70%;
+		}
+
+		/* switcher */
+		.switcher {
+			float: right;
+		}
+
+		.switcher *,
+		.switcher *:after,
+		.switcher *:before {
+			box-sizing: border-box;
+		}
+
+		.switcher input[type=checkbox] {
+			visibility: hidden;
+		}
+
+		.switcher input[type=checkbox]:checked+label {
+			background-color: #000;
+		}
+
+		.switcher input[type=checkbox]:checked+label:before {
+			transform: translateX(1.875rem);
+			background-color: #FFF;
+		}
+
+		.switcher label {
+			display: inline-block;
+			width: 3.75rem;
+			height: 1.875rem;
+			border: 0.125rem solid;
+			border-radius: 40em;
+			position: relative;
+			transition: transform 0.75s ease-in-out;
+			transform-origin: 50% 50%;
+			cursor: pointer;
+		}
+
+		.switcher label:before {
+			transition: transform 0.75s ease;
+			content: "";
+			display: block;
+			position: absolute;
+			width: 1.125rem;
+			height: 1.125rem;
+			background-color: #000;
+			border-radius: 50%;
+			top: 0.25rem;
+			left: 0.25rem;
+		}
+
+		ul.tips {
+			list-style: none;
+			font-size: .8rem;
+		}
+
+		ul.tips li {
+			line-height: 3rem;
+		}
+
+		::-webkit-scrollbar {
+			background-color: transparent;
+		}
+	</style>
+</head>
+
+<body>
+	<input type="checkbox" id="ham-menu">
+	<label for="ham-menu">
+		<div class="hide-des">
+			<span class="menu-line"></span>
+			<span class="menu-line"></span>
+			<span class="menu-line"></span>
+			<span class="menu-line"></span>
+			<span class="menu-line"></span>
+			<span class="menu-line"></span>
+		</div>
+	</label>
+	<div class="ham-menu">
+		<p>Background HDRI </p>
+		<span class="serverInfo">Server1</span>
+		<span class="serverExplain">(Onedrive)</span>
+		<ul class="hdriul" id="hdris1">
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+			<li>6</li>
+			<li>7</li>
+			<li>8</li>
+			<li>9</li>
+			<li>10</li>
+			<li>11</li>
+		</ul>
+		<span class="serverInfo">Server2</span>
+		<span class="serverExplain">(Ali)</span>
+		<ul class="hdriul" id="hdris2">
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+			<li>6</li>
+			<li>7</li>
+			<li>8</li>
+			<li>9</li>
+			<li>10</li>
+			<li>11</li>
+		</ul>
+		<p>Auto pilot <span class="switcher"><input type="checkbox" id="toggle1" />
+				<label for="toggle1"></label></span></p>
+		<p>Enable drag <span class="switcher"><input type="checkbox" id="toggle2" />
+				<label for="toggle2"></label></span></p>
+		<p>Tips:
+		<ul class="tips">
+			<li>Use the lever to start playing music.</li>
+			<li>Try another HDRI Server if one doesn't work.</li>
+			<li>Press F11 to enter full-screen mode for immersive view.</li>
+		</ul>
+		</p>
+	</div>
+	<div id="container"></div>
+	<div id="aplayer01"></div>
+	<!-- <div id="menu"></div> -->
+	<div class="progress" id="progressWrapper">
+		<div class="color" id="progress"></div>
+	</div>
+	<div id="hdrProgress"></div>
+	<meting-js style="display: none;" server="tencent" type="playlist" id="8405336621" fixed="true" order="random"
+		preload="auto" list-folded="ture" list-max-height="31.25rem" lrc-type="0" loop="none">
+	</meting-js>
+	<!-- Import maps polyfill -->
+	<!-- Remove this when import maps will be widely supported -->
+	<!-- <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script>
+	<script type="importmap">
+			{
+				"imports": {
+					"three": "./js/three.module.js"
+				}
+			}
+		</script>
+	<script type="module">
+
+		import * as THREE from 'three';
+
+		import Stats from './js/stats.module.js';
+
+		import { OrbitControls } from './js/OrbitControls.js';
+		import { RoomEnvironment } from './js/RoomEnvironment.js';
+
+		import { GLTFLoader } from './js/GLTFLoader.js';
+		import { DRACOLoader } from './js/DRACOLoader.js';
+		import { RGBELoader } from './js/RGBELoader.js';
+
+
+		let formarChoice;
+		let hdrProgress = document.getElementById('hdrProgress');
+		let progressBar = document.getElementById('progress');
+		let progressWrapper = document.getElementById('progressWrapper');
+		let hdris1 = document.getElementById('hdris1');
+		let hdriArr1 = hdris1.querySelectorAll('li');
+		let hdris2 = document.getElementById('hdris2');
+		let hdriArr2 = hdris2.querySelectorAll('li');
+		for (let i = 0; i < hdriArr1.length; i++) {
+			hdriArr1[i].onclick = () => {
+				hdrProgress.style = 'display:block';
+				hdrProgress.innerText = "0MB";
+				new RGBELoader()
+					.setPath('')
+					.load('./hdr/' + hdriArr1[i].innerText + '.hdr', function (texture) {
+						hdrProgress.style = 'display:none';
+						texture.mapping = THREE.EquirectangularReflectionMapping;
+						scene.background = texture;
+						scene.environment = texture;
+					}, (xhr) => {
+						hdrProgress.innerText = (xhr.loaded / 1000000).toFixed(1) + "MB";
+					});
+			}
+		}
+		for (let i = 0; i < hdriArr2.length; i++) {
+			hdriArr2[i].onclick = () => {
+				hdrProgress.style = 'display:block';
+				hdrProgress.innerText = "0%";
+				new RGBELoader()
+					.setPath('')
+					.load('./hdr/' + hdriArr2[i].innerText + '.hdr', function (texture) {
+						hdrProgress.style = 'display:none';
+						texture.mapping = THREE.EquirectangularReflectionMapping;
+						scene.background = texture;
+						scene.environment = texture;
+					}, (xhr) => {
+						hdrProgress.innerText = (xhr.loaded / xhr.total * 100).toFixed(1) + "%";
+					});
+			}
+		}
+
+		let isplaying = 0;
+		let mixer;
+
+		let aplayer = document.querySelectorAll('meting-js')[0].aplayer;
+		if (aplayer == null) {
+			let inv = setInterval(() => {
+				console.log("check aplayer");
+				aplayer = document.querySelectorAll('meting-js')[0].aplayer;
+				if (aplayer != null) {
+					clearInterval(inv);
+					// console.log(aplayer);
+				}
+			}, 100)
+		}
+		const clock = new THREE.Clock();
+		const container = document.getElementById('container');
+
+		const stats = new Stats();
+		// container.appendChild(stats.dom);
+
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.outputEncoding = THREE.sRGBEncoding;
+		container.appendChild(renderer.domElement);
+
+		const pmremGenerator = new THREE.PMREMGenerator(renderer);
+
+		const scene = new THREE.Scene();
+		scene.background = new THREE.Color(0xbfe3dd);
+		scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+		const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100);
+		camera.position.set(5, 2, 8);
+
+		const controls = new OrbitControls(camera, renderer.domElement);
+		controls.target.set(0, 0.5, 0);
+		controls.update();
+		controls.enablePan = false;
+		controls.enableDamping = true;
+		const listener = new THREE.AudioListener();
+		camera.add(listener);
+
+		let toggle1 = document.getElementById('toggle1');
+		toggle1.onclick = () => {
+			if (toggle1.checked) {
+				controls.autoRotate = true;
+			}
+			else {
+				controls.autoRotate = false;
+			}
+		}
+		let toggle2 = document.getElementById('toggle2');
+		toggle2.onclick = () => {
+			if (toggle2.checked) {
+				controls.enablePan = true;
+			}
+			else {
+				controls.enablePan = false;
+			}
+		}
+
+		// create a global audio source
+		const sound = new THREE.Audio(listener);
+
+		// load a sound and set it as the Audio object's buffer
+		const audioLoader = new THREE.AudioLoader();
+
+		var raycaster = new THREE.Raycaster();
+		var mouse = new THREE.Vector2();
+		var scroll;
+		raycaster.setFromCamera(mouse, camera);
+
+		function renderHover(event) {
+			raycaster.setFromCamera(mouse, camera);
+			// scene.add(new THREE.ArrowHelper(raycaster.ray.direction, raycaster.ray.origin, 300, 0xff0000));
+			var isIntersected = raycaster.intersectObjects(scene.children, true);
+			var objectsArr = [];
+			for (let i = 0; i < isIntersected.length; i++) {
+				objectsArr.push(isIntersected[i].object.name);
+			}
+			// console.log(objectsArr);
+			if (objectsArr.includes("Clef_lambert1_0")) {
+				scroll.material.emissive.setHex(0x86860e);
+				document.body.style.cursor = 'grab';
+
+			}
+			else {
+				scroll.material.emissive.setHex(scroll.currentHex);
+				document.body.style.cursor = 'default';
+			}
+		}
+
+		function onMouseClick(event) {
+			raycaster.setFromCamera(mouse, camera);
+			// scene.add(new THREE.ArrowHelper(raycaster.ray.direction, raycaster.ray.origin, 300, 0xff0000));
+			var isIntersected = raycaster.intersectObjects(scene.children, true);
+			var objectsArr = [];
+			for (let i = 0; i < isIntersected.length; i++) {
+				objectsArr.push(isIntersected[i].object.name);
+			}
+			// console.log(objectsArr);
+			if (objectsArr.includes("Clef_lambert1_0")) {
+				if (mixer.timeScale == 1 && isplaying == 1) {
+					mixer.timeScale = 0;
+					aplayer.pause();
+				}
+				else if (mixer.timeScale == 0) {
+					mixer.timeScale = -5;
+					audioLoader.load('MusicBoxWindup.mp3', function (buffer) {
+						sound.setBuffer(buffer);
+						sound.setLoop(true);
+						sound.setVolume(1);
+						sound.play();
+						aplayer.pause();
+					});
+				}
+				else {
+					isplaying = 1;
+					mixer.timeScale = 1;
+					sound.stop();
+					aplayer.skipForward();
+					aplayer.play();
+				}
+			}
+			else {
+			}
+		}
+		// const dracoLoader = new DRACOLoader();
+		// dracoLoader.setDecoderPath('/gltf/');
+
+		const loader = new GLTFLoader();
+		// loader.setDRACOLoader(dracoLoader);
+		loader.load('./model/musicbox.glb', function (gltf) {
+
+			const model = gltf.scene;
+
+			model.position.set(0, 0, 0);
+			model.scale.set(0.1, 0.1, 0.1);
+			scene.add(model);
+			scroll = scene.getObjectByName("Clef_lambert1_0", true);
+			scroll.currentHex = scroll.material.emissive.getHex();
+
+			// console.log(scroll)
+
+			// scene.add(new THREE.ArrowHelper(raycaster.ray.direction, raycaster.ray.origin, 300, 0xff0000));
+
+
+			function onMouseMove(event) {
+				mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+				mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+			}
+			window.addEventListener('click', onMouseClick, false);
+			window.addEventListener('mousemove', onMouseMove, false);
+			// model.traverse(function (child) {
+			// 	console.log(child)
+			// });
+			mixer = new THREE.AnimationMixer(model);
+			mixer.clipAction(gltf.animations[0]).play();
+			mixer.timeScale = 0;
+			animate();
+
+		},
+			(xhr) => {
+				console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+
+				progressBar.style.width = (xhr.loaded / xhr.total) * 100 + '%';
+				// console.log((xhr.loaded));
+				if (xhr.loaded == xhr.total) {
+					progressWrapper.style = 'display:none;';
+				}
+			},
+			(error) => {
+				console.log(error)
+			});
+
+
+
+
+		window.onresize = function () {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+
+		};
+
+
+		function animate() {
+
+			requestAnimationFrame(animate);
+
+			const delta = clock.getDelta();
+			renderHover()
+
+
+			mixer.update(delta);
+
+			controls.update();
+
+			renderer.render(scene, camera);
+
+		}
+		// scene.traverse(function (child) {
+		// 	console.log(child.material);
+		// });
+		let canvas = document.documentElement;
+		let enterFullScreen = () => {
+			canvas.webkitRequestFullscreen();
+			document.removeEventListener('click', enterFullScreen);
+		}
+		document.addEventListener('click', enterFullScreen)
+	</script>
+</body>
+
+</html>
