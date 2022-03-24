@@ -618,7 +618,7 @@
 
 				progressBar.style.width = (xhr.loaded / xhr.total) * 100 + '%';
 				// console.log((xhr.loaded));
-				if (xhr.loaded == xhr.total) {
+				if (xhr.loaded >= xhr.total) {
 					progressWrapper.style = 'display:none;';
 				}
 			},
